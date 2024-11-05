@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	"github.com/go-kratos/kratos/v2/internal/testdata/complex"
+	"github.com/cnsync/kratos/internal/testdata/complex"
 )
 
 func TestDecodeValues(t *testing.T) {

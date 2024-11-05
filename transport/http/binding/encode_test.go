@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
-	"github.com/go-kratos/kratos/v2/internal/testdata/binding"
+	"github.com/cnsync/kratos/internal/testdata/binding"
 )
 
 func TestEncodeURL(t *testing.T) {

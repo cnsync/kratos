@@ -9,10 +9,10 @@ import (
 	metricsdk "go.opentelemetry.io/otel/sdk/metric"
 	"google.golang.org/grpc/codes"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/go-kratos/kratos/v2/transport/http/status"
+	"github.com/cnsync/kratos/errors"
+	"github.com/cnsync/kratos/middleware"
+	"github.com/cnsync/kratos/transport"
+	"github.com/cnsync/kratos/transport/http/status"
 )
 
 const (

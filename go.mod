@@ -1,6 +1,6 @@
-module github.com/go-kratos/kratos/v2
+module github.com/cnsync/kratos
 
-go 1.20
+go 1.23.3
 
 require (
 	dario.cat/mergo v1.0.0

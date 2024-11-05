@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/cnsync/kratos/errors"
+	"github.com/cnsync/kratos/log"
+	"github.com/cnsync/kratos/middleware"
 )
 
 // Latency is recovery latency context key

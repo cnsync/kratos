@@ -7,11 +7,11 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/go-kratos/kratos/v2/transport/http/status"
+	"github.com/cnsync/kratos/errors"
+	"github.com/cnsync/kratos/log"
+	"github.com/cnsync/kratos/middleware"
+	"github.com/cnsync/kratos/transport"
+	"github.com/cnsync/kratos/transport/http/status"
 )
 
 // Redacter defines how to log an object

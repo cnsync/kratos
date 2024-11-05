@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/cnsync/kratos/middleware"
+	"github.com/cnsync/kratos/transport"
 )
 
 type (

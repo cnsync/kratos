@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/encoding"
+	"github.com/cnsync/kratos/encoding"
 
 	"dario.cat/mergo"
 )

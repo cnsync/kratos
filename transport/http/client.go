@@ -9,15 +9,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/encoding"
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/internal/host"
-	"github.com/go-kratos/kratos/v2/internal/httputil"
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/selector"
-	"github.com/go-kratos/kratos/v2/selector/wrr"
-	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/cnsync/kratos/encoding"
+	"github.com/cnsync/kratos/errors"
+	"github.com/cnsync/kratos/internal/host"
+	"github.com/cnsync/kratos/internal/httputil"
+	"github.com/cnsync/kratos/middleware"
+	"github.com/cnsync/kratos/registry"
+	"github.com/cnsync/kratos/selector"
+	"github.com/cnsync/kratos/selector/wrr"
+	"github.com/cnsync/kratos/transport"
 )
 
 func init() {

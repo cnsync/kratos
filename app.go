@@ -12,9 +12,9 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/cnsync/kratos/log"
+	"github.com/cnsync/kratos/registry"
+	"github.com/cnsync/kratos/transport"
 )
 
 // AppInfo is application context value.
