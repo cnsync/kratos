@@ -1,4 +1,4 @@
-module protoc-gen-go-http
+module github.com/cnsync/kratos/cmd/protoc-gen-go-http
 
 go 1.23.3
 

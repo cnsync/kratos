@@ -1,4 +1,4 @@
-module protoc-gen-go-errors
+module github.com/cnsync/kratos/cmd/protoc-gen-go-errors
 
 go 1.23.3
 
