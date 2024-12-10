@@ -1,18 +1,18 @@
 package log
 
-// FilterOption is filter option.
+// FilterOption 是过滤器的选项。
 type FilterOption func(*Filter)
 
 const fuzzyStr = "***"
 
-// FilterLevel with filter level.
+// FilterLevel 用于设置过滤级别。
 func FilterLevel(level Level) FilterOption {
 	return func(opts *Filter) {
 		opts.level = level
 	}
 }
 
-// FilterKey with filter key.
+// FilterKey 用于设置过滤键。
 func FilterKey(key ...string) FilterOption {
 	return func(o *Filter) {
 		for _, v := range key {
@@ -21,7 +21,7 @@ func FilterKey(key ...string) FilterOption {
 	}
 }
 
-// FilterValue with filter value.
+// FilterValue 用于设置过滤值。
 func FilterValue(value ...string) FilterOption {
 	return func(o *Filter) {
 		for _, v := range value {
@@ -30,14 +30,14 @@ func FilterValue(value ...string) FilterOption {
 	}
 }
 
-// FilterFunc with filter func.
+// FilterFunc 用于设置过滤函数。
 func FilterFunc(f func(level Level, keyvals ...interface{}) bool) FilterOption {
 	return func(o *Filter) {
 		o.filter = f
 	}
 }
 
-// Filter is a logger filter.
+// Filter 是一个日志过滤器。
 type Filter struct {
 	logger Logger
 	level  Level
@@ -46,7 +46,7 @@ type Filter struct {
 	filter func(level Level, keyvals ...interface{}) bool
 }
 
-// NewFilter new a logger filter.
+// NewFilter 新建一个日志过滤器。
 func NewFilter(logger Logger, opts ...FilterOption) *Filter {
 	options := Filter{
 		logger: logger,
@@ -59,23 +59,28 @@ func NewFilter(logger Logger, opts ...FilterOption) *Filter {
 	return &options
 }
 
-// Log Print log by level and keyvals.
+// Log 根据级别和键值对打印日志。
 func (f *Filter) Log(level Level, keyvals ...interface{}) error {
+	// 如果日志级别低于过滤器设置的级别，则不记录日志
 	if level < f.level {
 		return nil
 	}
-	// prefixkv contains the slice of arguments defined as prefixes during the log initialization
+
+	// prefixkv 包含在日志初始化期间定义为前缀的参数切片
 	var prefixkv []interface{}
+	// 如果日志记录器实现了 logger 接口，并且有前缀，则将前缀添加到 prefixkv 中
 	l, ok := f.logger.(*logger)
 	if ok && len(l.prefix) > 0 {
 		prefixkv = make([]interface{}, 0, len(l.prefix))
 		prefixkv = append(prefixkv, l.prefix...)
 	}
 
+	// 如果过滤器函数存在，并且它对前缀或键值对返回 true，则不记录日志
 	if f.filter != nil && (f.filter(level, prefixkv...) || f.filter(level, keyvals...)) {
 		return nil
 	}
 
+	// 如果过滤器设置了键或值，则遍历键值对，将匹配的键或值替换为模糊字符串
 	if len(f.key) > 0 || len(f.value) > 0 {
 		for i := 0; i < len(keyvals); i += 2 {
 			v := i + 1
@@ -90,5 +95,7 @@ func (f *Filter) Log(level Level, keyvals ...interface{}) error {
 			}
 		}
 	}
+
+	// 记录过滤后的日志
 	return f.logger.Log(level, keyvals...)
 }

@@ -2,29 +2,31 @@ package log
 
 import "strings"
 
-// Level is a logger level.
+// Level 是日志记录器的级别。
 type Level int8
 
-// LevelKey is logger level key.
+// LevelKey 是日志记录器级别的键。
 const LevelKey = "level"
 
 const (
-	// LevelDebug is logger debug level.
+	// LevelDebug 是日志记录器的调试级别。
 	LevelDebug Level = iota - 1
-	// LevelInfo is logger info level.
+	// LevelInfo 是日志记录器的信息级别。
 	LevelInfo
-	// LevelWarn is logger warn level.
+	// LevelWarn 是日志记录器的警告级别。
 	LevelWarn
-	// LevelError is logger error level.
+	// LevelError 是日志记录器的错误级别。
 	LevelError
-	// LevelFatal is logger fatal level
+	// LevelFatal 是日志记录器的致命级别。
 	LevelFatal
 )
 
+// Key 方法返回日志记录器级别的键。
 func (l Level) Key() string {
 	return LevelKey
 }
 
+// String 方法返回日志记录器级别的字符串表示。
 func (l Level) String() string {
 	switch l {
 	case LevelDebug:
@@ -42,7 +44,7 @@ func (l Level) String() string {
 	}
 }
 
-// ParseLevel parses a level string into a logger Level value.
+// ParseLevel 方法将一个级别字符串解析为日志记录器的 Level 值。
 func ParseLevel(s string) Level {
 	switch strings.ToUpper(s) {
 	case "DEBUG":

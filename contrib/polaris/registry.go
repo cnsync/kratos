@@ -12,7 +12,7 @@ import (
 	"github.com/polarismesh/polaris-go"
 	"github.com/polarismesh/polaris-go/pkg/model"
 
-	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/cnsync/kratos/registry"
 )
 
 var (

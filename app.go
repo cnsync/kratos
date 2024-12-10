@@ -3,6 +3,9 @@ package kratos
 import (
 	"context"
 	"errors"
+	"github.com/cnsync/kratos/log"
+	"github.com/cnsync/kratos/registry"
+	"github.com/cnsync/kratos/transport"
 	"os"
 	"os/signal"
 	"sync"
@@ -11,10 +14,6 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
-
-	"github.com/cnsync/kratos/log"
-	"github.com/cnsync/kratos/registry"
-	"github.com/cnsync/kratos/transport"
 )
 
 // AppInfo is application context value.
@@ -176,7 +175,7 @@ func (a *App) buildInstance() (*registry.ServiceInstance, error) {
 	}
 	if len(endpoints) == 0 {
 		for _, srv := range a.opts.servers {
-			if r, ok := srv.(transport.Endpointer); ok {
+			if r, ok := srv.(transport.EndpointProvider); ok {
 				e, err := r.Endpoint()
 				if err != nil {
 					return nil, err

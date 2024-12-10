@@ -1,14 +1,14 @@
 module github.com/go-kratos/kratos/contrib/config/nacos/v2
 
-go 1.19
+go 1.23.3
 
 require (
-	github.com/go-kratos/kratos/v2 v2.8.2
+	github.com/cnsync/kratos v2.8.2
 	github.com/nacos-group/nacos-sdk-go v1.0.9
 )
 
 require (
-	dario.cat/mergo v1.0.0 // indirect
+	dario.cat/mergo v1.0.1 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
@@ -23,9 +23,9 @@ require (
 	go.uber.org/atomic v1.6.0 // indirect
 	go.uber.org/multierr v1.5.0 // indirect
 	go.uber.org/zap v1.15.0 // indirect
-	google.golang.org/protobuf v1.33.0 // indirect
+	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/go-kratos/kratos/v2 => ../../../
+replace github.com/cnsync/kratos => ../../../

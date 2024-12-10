@@ -14,11 +14,12 @@ import (
 )
 
 var (
+	// 确保 atomicValue 和 errValue 结构体实现了 Value 接口
 	_ Value = (*atomicValue)(nil)
 	_ Value = (*errValue)(nil)
 )
 
-// Value is config value interface.
+// Value 是配置值的接口
 type Value interface {
 	Bool() (bool, error)
 	Int() (int64, error)
@@ -32,14 +33,17 @@ type Value interface {
 	Store(interface{})
 }
 
+// atomicValue 是一个原子值，它实现了 Value 接口
 type atomicValue struct {
 	atomic.Value
 }
 
+// typeAssertError 返回一个错误，表明类型断言失败
 func (v *atomicValue) typeAssertError() error {
 	return fmt.Errorf("type assert to %v failed", reflect.TypeOf(v.Load()))
 }
 
+// Bool 返回值的布尔表示
 func (v *atomicValue) Bool() (bool, error) {
 	switch val := v.Load().(type) {
 	case bool:
@@ -50,6 +54,7 @@ func (v *atomicValue) Bool() (bool, error) {
 	return false, v.typeAssertError()
 }
 
+// Int 返回值的整数表示
 func (v *atomicValue) Int() (int64, error) {
 	switch val := v.Load().(type) {
 	case int:
@@ -82,34 +87,47 @@ func (v *atomicValue) Int() (int64, error) {
 	return 0, v.typeAssertError()
 }
 
+// Slice 返回值的切片表示
 func (v *atomicValue) Slice() ([]Value, error) {
 	vals, ok := v.Load().([]interface{})
 	if !ok {
 		return nil, v.typeAssertError()
 	}
 	slices := make([]Value, 0, len(vals))
+	// 遍历切片 vals 中的每个元素
 	for _, val := range vals {
+		// 为每个元素创建一个新的 atomicValue 实例
 		a := new(atomicValue)
+		// 将原始值存储在 atomicValue 实例中
 		a.Store(val)
+		// 将 atomicValue 实例添加到新的切片 slices 中
 		slices = append(slices, a)
 	}
+	// 返回转换后的切片和 nil 表示没有错误
 	return slices, nil
 }
 
+// Map 返回值的映射表示
 func (v *atomicValue) Map() (map[string]Value, error) {
 	vals, ok := v.Load().(map[string]interface{})
 	if !ok {
 		return nil, v.typeAssertError()
 	}
+	// 将 map[string]interface{} 转换为 map[string]Value
 	m := make(map[string]Value, len(vals))
 	for key, val := range vals {
+		// 为每个值创建一个新的 atomicValue 实例
 		a := new(atomicValue)
+		// 将原始值存储在 atomicValue 实例中
 		a.Store(val)
+		// 将 atomicValue 实例添加到新的 map 中
 		m[key] = a
 	}
+	// 返回转换后的 map 和 nil 表示没有错误
 	return m, nil
 }
 
+// Float 返回值的浮点表示
 func (v *atomicValue) Float() (float64, error) {
 	switch val := v.Load().(type) {
 	case int:
@@ -142,6 +160,7 @@ func (v *atomicValue) Float() (float64, error) {
 	return 0.0, v.typeAssertError()
 }
 
+// String 返回值的字符串表示
 func (v *atomicValue) String() (string, error) {
 	switch val := v.Load().(type) {
 	case string:
@@ -156,6 +175,7 @@ func (v *atomicValue) String() (string, error) {
 	return "", v.typeAssertError()
 }
 
+// Duration 返回值的持续时间表示
 func (v *atomicValue) Duration() (time.Duration, error) {
 	val, err := v.Int()
 	if err != nil {
@@ -164,6 +184,7 @@ func (v *atomicValue) Duration() (time.Duration, error) {
 	return time.Duration(val), nil
 }
 
+// Scan 将值扫描到目标对象中
 func (v *atomicValue) Scan(obj interface{}) error {
 	data, err := json.Marshal(v.Load())
 	if err != nil {
@@ -175,17 +196,37 @@ func (v *atomicValue) Scan(obj interface{}) error {
 	return json.Unmarshal(data, obj)
 }
 
+// errValue 是一个错误值，它实现了 Value 接口
 type errValue struct {
 	err error
 }
 
-func (v errValue) Bool() (bool, error)              { return false, v.err }
-func (v errValue) Int() (int64, error)              { return 0, v.err }
-func (v errValue) Float() (float64, error)          { return 0.0, v.err }
+// Bool 返回错误
+func (v errValue) Bool() (bool, error) { return false, v.err }
+
+// Int 返回错误
+func (v errValue) Int() (int64, error) { return 0, v.err }
+
+// Float 返回错误
+func (v errValue) Float() (float64, error) { return 0.0, v.err }
+
+// Duration 返回错误
 func (v errValue) Duration() (time.Duration, error) { return 0, v.err }
-func (v errValue) String() (string, error)          { return "", v.err }
-func (v errValue) Scan(interface{}) error           { return v.err }
-func (v errValue) Load() interface{}                { return nil }
-func (v errValue) Store(interface{})                {}
-func (v errValue) Slice() ([]Value, error)          { return nil, v.err }
-func (v errValue) Map() (map[string]Value, error)   { return nil, v.err }
+
+// String 返回错误
+func (v errValue) String() (string, error) { return "", v.err }
+
+// Scan 返回错误
+func (v errValue) Scan(interface{}) error { return v.err }
+
+// Load 返回 nil
+func (v errValue) Load() interface{} { return nil }
+
+// Store 不做任何操作
+func (v errValue) Store(interface{}) {}
+
+// Slice 返回错误
+func (v errValue) Slice() ([]Value, error) { return nil, v.err }
+
+// Map 返回错误
+func (v errValue) Map() (map[string]Value, error) { return nil, v.err }

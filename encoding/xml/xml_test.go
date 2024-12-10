@@ -6,10 +6,12 @@ import (
 	"testing"
 )
 
+// Plain 是一个简单的结构体，包含一个接口类型的字段 V
 type Plain struct {
 	V interface{}
 }
 
+// NestedOrder 是一个嵌套的结构体，包含三个字符串字段 Field1、Field2 和 Field3
 type NestedOrder struct {
 	XMLName struct{} `xml:"result"`
 	Field1  string   `xml:"parent>c"`
@@ -17,12 +19,13 @@ type NestedOrder struct {
 	Field3  string   `xml:"parent>a"`
 }
 
+// TestCodec_Marshal 测试 codec 的 Marshal 方法
 func TestCodec_Marshal(t *testing.T) {
 	tests := []struct {
 		Value     interface{}
 		ExpectXML string
 	}{
-		// Test value types
+		// 测试值类型
 		{Value: &Plain{true}, ExpectXML: `<Plain><V>true</V></Plain>`},
 		{Value: &Plain{false}, ExpectXML: `<Plain><V>false</V></Plain>`},
 		{Value: &Plain{42}, ExpectXML: `<Plain><V>42</V></Plain>`},
@@ -52,6 +55,7 @@ func TestCodec_Marshal(t *testing.T) {
 	}
 }
 
+// TestCodec_Unmarshal 测试 codec 的 Unmarshal 方法
 func TestCodec_Unmarshal(t *testing.T) {
 	tests := []struct {
 		want     interface{}
@@ -83,6 +87,7 @@ func TestCodec_Unmarshal(t *testing.T) {
 	}
 }
 
+// TestCodec_NilUnmarshal 测试 codec 的 Unmarshal 方法，当目标为 nil 时
 func TestCodec_NilUnmarshal(t *testing.T) {
 	tests := []struct {
 		want     interface{}

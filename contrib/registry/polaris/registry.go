@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"github.com/cnsync/kratos/log"
 
-	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/cnsync/kratos/registry"
 
 	"github.com/polarismesh/polaris-go/api"
 	"github.com/polarismesh/polaris-go/pkg/config"

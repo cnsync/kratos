@@ -9,60 +9,60 @@ import (
 
 var _ Transporter = (*Transport)(nil)
 
-// Transporter is http Transporter
+// Transporter 是 HTTP 协议的 Transporter 接口，定义了 HTTP 请求的基本操作。
 type Transporter interface {
-	transport.Transporter
-	Request() *http.Request
-	PathTemplate() string
+	transport.Transporter   // 嵌套 transport.Transporter，继承了 transport 包中的功能
+	Request() *http.Request // 获取 HTTP 请求
+	PathTemplate() string   // 获取 HTTP 路径模板
 }
 
-// Transport is an HTTP transport.
+// Transport 是一个 HTTP 协议的 Transport 实现，封装了 HTTP 请求和响应相关的字段和操作。
 type Transport struct {
-	endpoint     string
-	operation    string
-	reqHeader    headerCarrier
-	replyHeader  headerCarrier
-	request      *http.Request
-	response     http.ResponseWriter
-	pathTemplate string
+	endpoint     string              // 请求的端点（URL）
+	operation    string              // 操作名称
+	reqHeader    headerCarrier       // 请求头
+	replyHeader  headerCarrier       // 响应头
+	request      *http.Request       // HTTP 请求对象
+	response     http.ResponseWriter // HTTP 响应对象
+	pathTemplate string              // 请求路径模板
 }
 
-// Kind returns the transport kind.
+// Kind 返回当前 Transport 的协议类型，这里是 HTTP。
 func (tr *Transport) Kind() transport.Kind {
 	return transport.KindHTTP
 }
 
-// Endpoint returns the transport endpoint.
+// Endpoint 返回当前 HTTP 请求的端点（URL）。
 func (tr *Transport) Endpoint() string {
 	return tr.endpoint
 }
 
-// Operation returns the transport operation.
+// Operation 返回当前操作的名称。
 func (tr *Transport) Operation() string {
 	return tr.operation
 }
 
-// Request returns the HTTP request.
+// Request 返回当前的 HTTP 请求对象。
 func (tr *Transport) Request() *http.Request {
 	return tr.request
 }
 
-// RequestHeader returns the request header.
+// RequestHeader 返回请求头信息。
 func (tr *Transport) RequestHeader() transport.Header {
 	return tr.reqHeader
 }
 
-// ReplyHeader returns the reply header.
+// ReplyHeader 返回响应头信息。
 func (tr *Transport) ReplyHeader() transport.Header {
 	return tr.replyHeader
 }
 
-// PathTemplate returns the http path template.
+// PathTemplate 返回请求的路径模板。
 func (tr *Transport) PathTemplate() string {
 	return tr.pathTemplate
 }
 
-// SetOperation sets the transport operation.
+// SetOperation 设置当前的操作名称。此函数会从上下文中获取 Transport 对象并设置操作名称。
 func SetOperation(ctx context.Context, op string) {
 	if tr, ok := transport.FromServerContext(ctx); ok {
 		if tr, ok := tr.(*Transport); ok {
@@ -71,9 +71,8 @@ func SetOperation(ctx context.Context, op string) {
 	}
 }
 
-// SetCookie adds a Set-Cookie header to the provided [ResponseWriter]'s headers.
-// The provided cookie must have a valid Name. Invalid cookies may be
-// silently dropped.
+// SetCookie 向 HTTP 响应头添加一个 Set-Cookie 信息。
+// 提供的 Cookie 必须有有效的 Name，若无效则会被忽略。
 func SetCookie(ctx context.Context, cookie *http.Cookie) {
 	if tr, ok := transport.FromServerContext(ctx); ok {
 		if tr, ok := tr.(*Transport); ok {
@@ -82,7 +81,8 @@ func SetCookie(ctx context.Context, cookie *http.Cookie) {
 	}
 }
 
-// RequestFromServerContext returns request from context.
+// RequestFromServerContext 从上下文中提取出 HTTP 请求对象。
+// 返回值是请求对象和一个布尔值，表示是否成功获取。
 func RequestFromServerContext(ctx context.Context) (*http.Request, bool) {
 	if tr, ok := transport.FromServerContext(ctx); ok {
 		if tr, ok := tr.(*Transport); ok {
@@ -92,24 +92,25 @@ func RequestFromServerContext(ctx context.Context) (*http.Request, bool) {
 	return nil, false
 }
 
+// headerCarrier 是一个自定义类型，它实现了 transport.Header 接口，用于封装 HTTP 请求和响应头。
 type headerCarrier http.Header
 
-// Get returns the value associated with the passed key.
+// Get 获取指定头部键的值。
 func (hc headerCarrier) Get(key string) string {
 	return http.Header(hc).Get(key)
 }
 
-// Set stores the key-value pair.
+// Set 设置指定头部键的值。
 func (hc headerCarrier) Set(key string, value string) {
 	http.Header(hc).Set(key, value)
 }
 
-// Add append value to key-values pair.
+// Add 向指定头部键添加一个值。
 func (hc headerCarrier) Add(key string, value string) {
 	http.Header(hc).Add(key, value)
 }
 
-// Keys lists the keys stored in this carrier.
+// Keys 返回所有的头部键。
 func (hc headerCarrier) Keys() []string {
 	keys := make([]string, 0, len(hc))
 	for k := range http.Header(hc) {
@@ -118,7 +119,7 @@ func (hc headerCarrier) Keys() []string {
 	return keys
 }
 
-// Values returns a slice of values associated with the passed key.
+// Values 返回指定键的所有值。
 func (hc headerCarrier) Values(key string) []string {
 	return http.Header(hc).Values(key)
 }

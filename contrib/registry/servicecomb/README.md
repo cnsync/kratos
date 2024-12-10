@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-chassis/sc-client"
 	"github.com/go-kratos/kratos/contrib/registry/servicecomb/v2"
-	"github.com/go-kratos/kratos/v2"
+	"github.com/cnsync/kratos"
 )
 
 func main() {
@@ -41,7 +41,7 @@ import (
 
 	"github.com/go-chassis/sc-client"
 	"github.com/go-kratos/kratos/contrib/registry/servicecomb/v2"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/cnsync/kratos/transport/grpc"
 )
 
 func main() {

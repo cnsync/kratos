@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-kratos/aegis/ratelimit"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/cnsync/kratos/errors"
+	"github.com/cnsync/kratos/middleware"
+	"github.com/cnsync/kratos/transport"
+	"github.com/cnsync/kratos/transport/http"
 
 	"github.com/polarismesh/polaris-go/pkg/model"
 )

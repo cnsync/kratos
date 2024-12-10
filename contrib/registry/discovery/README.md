@@ -48,7 +48,7 @@ func main() {
 ```go
 import (
 	"github.com/go-kratos/kratos/contrib/registry/discovery/v2"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/cnsync/kratos/transport/grpc"
 )
 
 func main() {

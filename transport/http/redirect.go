@@ -1,18 +1,25 @@
 package http
 
+// redirect 结构体表示一个 HTTP 重定向。
 type redirect struct {
-	URL  string
+	// URL 是重定向的目标 URL。
+	URL string
+	// Code 是重定向的状态码。
 	Code int
 }
 
+// Redirect 方法返回重定向的 URL 和状态码。
 func (r *redirect) Redirect() (string, int) {
 	return r.URL, r.Code
 }
 
-// NewRedirect new a redirect with url, which may be a path relative to the request path.
-// The provided code should be in the 3xx range and is usually StatusMovedPermanently, StatusFound or StatusSeeOther.
-// If the Content-Type header has not been set, Redirect sets it to "text/html; charset=utf-8" and writes a small HTML body.
-// Setting the Content-Type header to any value, including nil, disables that behavior.
+// NewRedirect 函数创建一个新的重定向实例。
+// 参数：
+//   - url：重定向的目标 URL，可以是相对于请求路径的路径。
+//   - code：重定向的状态码，应该在 3xx 范围内，通常是 StatusMovedPermanently、StatusFound 或 StatusSeeOther。
+//
+// 返回值：
+//   - Redirector：创建的重定向实例。
 func NewRedirect(url string, code int) Redirector {
 	return &redirect{URL: url, Code: code}
 }

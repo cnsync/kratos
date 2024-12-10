@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	cfg "github.com/go-kratos/kratos/contrib/config/etcd/v2"
-	"github.com/go-kratos/kratos/v2/config"
+	"github.com/cnsync/kratos/config"
 )
 
 // create an etcd client

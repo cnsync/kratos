@@ -20,91 +20,92 @@ import (
 	"github.com/cnsync/kratos/transport"
 	"github.com/cnsync/kratos/transport/grpc/resolver/discovery"
 
-	// init resolver
+	// 初始化 resolver
 	_ "github.com/cnsync/kratos/transport/grpc/resolver/direct"
 )
 
 func init() {
+	// 如果全局选择器为空，初始化为 WRR 负载均衡器
 	if selector.GlobalSelector() == nil {
 		selector.SetGlobalSelector(wrr.NewBuilder())
 	}
 }
 
-// ClientOption is gRPC client option.
+// ClientOption 是 gRPC 客户端的配置选项类型
 type ClientOption func(o *clientOptions)
 
-// WithEndpoint with client endpoint.
+// WithEndpoint 设置客户端的服务端点
 func WithEndpoint(endpoint string) ClientOption {
 	return func(o *clientOptions) {
 		o.endpoint = endpoint
 	}
 }
 
-// WithSubset with client discovery subset size.
-// zero value means subset filter disabled
+// WithSubset 设置客户端的发现子集大小
+// 默认为 0，表示不启用子集过滤
 func WithSubset(size int) ClientOption {
 	return func(o *clientOptions) {
 		o.subsetSize = size
 	}
 }
 
-// WithTimeout with client timeout.
+// WithTimeout 设置客户端的超时时间
 func WithTimeout(timeout time.Duration) ClientOption {
 	return func(o *clientOptions) {
 		o.timeout = timeout
 	}
 }
 
-// WithMiddleware with client middleware.
+// WithMiddleware 设置客户端的中间件
 func WithMiddleware(m ...middleware.Middleware) ClientOption {
 	return func(o *clientOptions) {
 		o.middleware = m
 	}
 }
 
-// WithDiscovery with client discovery.
+// WithDiscovery 设置客户端的服务发现接口
 func WithDiscovery(d registry.Discovery) ClientOption {
 	return func(o *clientOptions) {
 		o.discovery = d
 	}
 }
 
-// WithTLSConfig with TLS config.
+// WithTLSConfig 设置客户端的 TLS 配置
 func WithTLSConfig(c *tls.Config) ClientOption {
 	return func(o *clientOptions) {
 		o.tlsConf = c
 	}
 }
 
-// WithUnaryInterceptor returns a DialOption that specifies the interceptor for unary RPCs.
+// WithUnaryInterceptor 设置客户端单次 RPC 的拦截器
 func WithUnaryInterceptor(in ...grpc.UnaryClientInterceptor) ClientOption {
 	return func(o *clientOptions) {
 		o.ints = in
 	}
 }
 
-// WithStreamInterceptor returns a DialOption that specifies the interceptor for streaming RPCs.
+// WithStreamInterceptor 设置客户端流式 RPC 的拦截器
 func WithStreamInterceptor(in ...grpc.StreamClientInterceptor) ClientOption {
 	return func(o *clientOptions) {
 		o.streamInts = in
 	}
 }
 
-// WithOptions with gRPC options.
+// WithOptions 设置 gRPC 连接的其他选项
 func WithOptions(opts ...grpc.DialOption) ClientOption {
 	return func(o *clientOptions) {
 		o.grpcOpts = opts
 	}
 }
 
-// WithNodeFilter with select filters
+// WithNodeFilter 设置节点选择过滤器
 func WithNodeFilter(filters ...selector.NodeFilter) ClientOption {
 	return func(o *clientOptions) {
 		o.filters = filters
 	}
 }
 
-// WithHealthCheck with health check
+// WithHealthCheck 设置是否启用健康检查
 func WithHealthCheck(healthCheck bool) ClientOption {
 	return func(o *clientOptions) {
 		if !healthCheck {
@@ -113,19 +114,20 @@ func WithHealthCheck(healthCheck bool) ClientOption {
 	}
 }
 
-// WithLogger with logger
-// Deprecated: use global logger instead.
+// WithLogger 设置日志记录器
+// Deprecated: 请使用全局日志记录器
 func WithLogger(log.Logger) ClientOption {
 	return func(*clientOptions) {}
 }
 
+// WithPrintDiscoveryDebugLog 设置是否打印服务发现的调试日志
 func WithPrintDiscoveryDebugLog(p bool) ClientOption {
 	return func(o *clientOptions) {
 		o.printDiscoveryDebugLog = p
 	}
 }
 
-// clientOptions is gRPC Client
+// clientOptions 是 gRPC 客户端的配置选项结构体
 type clientOptions struct {
 	endpoint               string
 	subsetSize             int
@@ -143,17 +145,18 @@ type clientOptions struct {
 	printDiscoveryDebugLog bool
 }
 
-// Dial returns a GRPC connection.
+// Dial 返回一个 gRPC 连接
 func Dial(ctx context.Context, opts ...ClientOption) (*grpc.ClientConn, error) {
 	return dial(ctx, false, opts...)
 }
 
-// DialInsecure returns an insecure GRPC connection.
+// DialInsecure 返回一个不安全的 gRPC 连接
 func DialInsecure(ctx context.Context, opts ...ClientOption) (*grpc.ClientConn, error) {
 	return dial(ctx, true, opts...)
 }
 
 func dial(ctx context.Context, insecure bool, opts ...ClientOption) (*grpc.ClientConn, error) {
+	// 初始化默认的客户端配置
 	options := clientOptions{
 		timeout:                2000 * time.Millisecond,
 		balancerName:           balancerName,
@@ -161,22 +164,31 @@ func dial(ctx context.Context, insecure bool, opts ...ClientOption) (*grpc.Clien
 		printDiscoveryDebugLog: true,
 		healthCheckConfig:      `,"healthCheckConfig":{"serviceName":""}`,
 	}
+
+	// 应用客户端配置选项
 	for _, o := range opts {
 		o(&options)
 	}
+
+	// 设置单次 RPC 的拦截器
 	ints := []grpc.UnaryClientInterceptor{
 		unaryClientInterceptor(options.middleware, options.timeout, options.filters),
 	}
+
+	// 设置流式 RPC 的拦截器
 	sints := []grpc.StreamClientInterceptor{
 		streamClientInterceptor(options.streamMiddleware, options.filters),
 	}
 
+	// 添加用户自定义的拦截器
 	if len(options.ints) > 0 {
 		ints = append(ints, options.ints...)
 	}
 	if len(options.streamInts) > 0 {
 		sints = append(sints, options.streamInts...)
 	}
+
+	// 配置 gRPC 连接选项
 	grpcOpts := []grpc.DialOption{
 		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]%s}`,
 			options.balancerName, options.healthCheckConfig)),
@@ -184,6 +196,7 @@ func dial(ctx context.Context, insecure bool, opts ...ClientOption) (*grpc.Clien
 		grpc.WithChainStreamInterceptor(sints...),
 	}
 
+	// 如果启用了服务发现，则添加解析器选项
 	if options.discovery != nil {
 		grpcOpts = append(grpcOpts,
 			grpc.WithResolvers(
@@ -195,31 +208,44 @@ func dial(ctx context.Context, insecure bool, opts ...ClientOption) (*grpc.Clien
 					discovery.PrintDebugLog(options.printDiscoveryDebugLog),
 				)))
 	}
+
+	// 如果是非安全连接，使用不安全的凭证
 	if insecure {
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(grpcinsecure.NewCredentials()))
 	}
+
+	// 如果设置了 TLS 配置，使用加密连接
 	if options.tlsConf != nil {
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(credentials.NewTLS(options.tlsConf)))
 	}
+
+	// 添加用户自定义的 gRPC 连接选项
 	if len(options.grpcOpts) > 0 {
 		grpcOpts = append(grpcOpts, options.grpcOpts...)
 	}
+
+	// 使用配置选项建立 gRPC 连接
 	return grpc.DialContext(ctx, options.endpoint, grpcOpts...)
 }
 
 func unaryClientInterceptor(ms []middleware.Middleware, timeout time.Duration, filters []selector.NodeFilter) grpc.UnaryClientInterceptor {
 	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		// 为每个 RPC 请求创建新的上下文
 		ctx = transport.NewClientContext(ctx, &Transport{
 			endpoint:    cc.Target(),
 			operation:   method,
 			reqHeader:   headerCarrier{},
 			nodeFilters: filters,
 		})
+
+		// 设置超时
 		if timeout > 0 {
 			var cancel context.CancelFunc
 			ctx, cancel = context.WithTimeout(ctx, timeout)
 			defer cancel()
 		}
+
+		// 处理 RPC 调用
 		h := func(ctx context.Context, req interface{}) (interface{}, error) {
 			if tr, ok := transport.FromClientContext(ctx); ok {
 				header := tr.RequestHeader()
@@ -228,13 +254,17 @@ func unaryClientInterceptor(ms []middleware.Middleware, timeout time.Duration, f
 				for _, k := range keys {
 					keyvals = append(keyvals, k, header.Get(k))
 				}
+				// 将请求头添加到 gRPC 上下文中
 				ctx = grpcmd.AppendToOutgoingContext(ctx, keyvals...)
 			}
 			return reply, invoker(ctx, method, req, reply, cc, opts...)
 		}
+
+		// 应用中间件链
 		if len(ms) > 0 {
 			h = middleware.Chain(ms...)(h)
 		}
+
 		var p selector.Peer
 		ctx = selector.NewPeerContext(ctx, &p)
 		_, err := h(ctx, req)
@@ -242,17 +272,19 @@ func unaryClientInterceptor(ms []middleware.Middleware, timeout time.Duration, f
 	}
 }
 
-// wrappedClientStream wraps the grpc.ClientStream and applies middleware
+// wrappedClientStream 包装了 grpc.ClientStream，并应用中间件
 type wrappedClientStream struct {
 	grpc.ClientStream
 	ctx        context.Context
 	middleware matcher.Matcher
 }
 
+// Context 返回包装后的流的上下文
 func (w *wrappedClientStream) Context() context.Context {
 	return w.ctx
 }
 
+// SendMsg 发送消息，应用中间件
 func (w *wrappedClientStream) SendMsg(m interface{}) error {
 	h := func(_ context.Context, req interface{}) (interface{}, error) {
 		return req, w.ClientStream.SendMsg(m)
@@ -263,6 +295,7 @@ func (w *wrappedClientStream) SendMsg(m interface{}) error {
 		return fmt.Errorf("transport value stored in ctx returns: %v", ok)
 	}
 
+	// 如果有匹配的中间件，应用它们
 	if next := w.middleware.Match(info.Operation()); len(next) > 0 {
 		h = middleware.Chain(next...)(h)
 	}
@@ -271,6 +304,7 @@ func (w *wrappedClientStream) SendMsg(m interface{}) error {
 	return err
 }
 
+// RecvMsg 接收消息，应用中间件
 func (w *wrappedClientStream) RecvMsg(m interface{}) error {
 	h := func(_ context.Context, req interface{}) (interface{}, error) {
 		return req, w.ClientStream.RecvMsg(m)
@@ -281,6 +315,7 @@ func (w *wrappedClientStream) RecvMsg(m interface{}) error {
 		return fmt.Errorf("transport value stored in ctx returns: %v", ok)
 	}
 
+	// 如果有匹配的中间件，应用它们
 	if next := w.middleware.Match(info.Operation()); len(next) > 0 {
 		h = middleware.Chain(next...)(h)
 	}
@@ -289,17 +324,21 @@ func (w *wrappedClientStream) RecvMsg(m interface{}) error {
 	return err
 }
 
+// streamClientInterceptor 为流式 RPC 设置拦截器，并应用中间件
 func streamClientInterceptor(ms []middleware.Middleware, filters []selector.NodeFilter) grpc.StreamClientInterceptor {
-	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) { // nolint
+	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+		// 为每个流式 RPC 请求创建新的上下文
 		ctx = transport.NewClientContext(ctx, &Transport{
 			endpoint:    cc.Target(),
 			operation:   method,
 			reqHeader:   headerCarrier{},
 			nodeFilters: filters,
 		})
+
 		var p selector.Peer
 		ctx = selector.NewPeerContext(ctx, &p)
 
+		// 创建流式 RPC 流
 		clientStream, err := streamer(ctx, desc, cc, method, opts...)
 		if err != nil {
 			return nil, err
@@ -310,11 +349,13 @@ func streamClientInterceptor(ms []middleware.Middleware, filters []selector.Node
 		}
 
 		m := matcher.New()
+		// 如果有中间件，应用它们
 		if len(ms) > 0 {
 			m.Use(ms...)
 			middleware.Chain(ms...)(h)
 		}
 
+		// 返回包装后的流
 		wrappedStream := &wrappedClientStream{
 			ClientStream: clientStream,
 			ctx:          ctx,

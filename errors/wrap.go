@@ -4,33 +4,25 @@ import (
 	stderrors "errors"
 )
 
-// Is reports whether any error in err's chain matches target.
+// Is 函数用于检查错误链中是否存在与目标错误相匹配的错误。
 //
-// The chain consists of err itself followed by the sequence of errors obtained by
-// repeatedly calling Unwrap.
+// 错误链由 err 本身以及通过重复调用 Unwrap 获得的错误序列组成。
 //
-// An error is considered to match a target if it is equal to that target or if
-// it implements a method Is(error) bool such that Is(target) returns true.
+// 如果错误等于目标错误，或者它实现了一个 Is(error) bool 方法，并且该方法对目标错误返回 true，则认为该错误与目标错误匹配。
 func Is(err, target error) bool { return stderrors.Is(err, target) }
 
-// As finds the first error in err's chain that matches target, and if so, sets
-// target to that error value and returns true.
+// As 函数用于在错误链中查找第一个与目标类型匹配的错误，并将其赋值给目标变量。
 //
-// The chain consists of err itself followed by the sequence of errors obtained by
-// repeatedly calling Unwrap.
+// 错误链由 err 本身以及通过重复调用 Unwrap 获得的错误序列组成。
 //
-// An error matches target if the error's concrete value is assignable to the value
-// pointed to by target, or if the error has a method As(interface{}) bool such that
-// As(target) returns true. In the latter case, the As method is responsible for
-// setting target.
+// 如果错误的具体值可以赋值给目标指针所指向的值，或者错误有一个 As(interface{}) bool 方法，并且该方法对目标返回 true，则认为该错误与目标匹配。
 //
-// As will panic if target is not a non-nil pointer to either a type that implements
-// error, or to any interface type. As returns false if err is nil.
-func As(err error, target interface{}) bool { return stderrors.As(err, target) }
+// 如果目标不是一个指向实现了 error 接口的类型的非 nil 指针，或者不是一个指向任何接口类型的非 nil 指针，As 函数将 panic。如果 err 为 nil，As 函数返回 false。
+func As(err error, target interface{}) bool { return stderrors.As(err, &target) }
 
-// Unwrap returns the result of calling the Unwrap method on err, if err's
-// type contains an Unwrap method returning error.
-// Otherwise, Unwrap returns nil.
+// Unwrap 函数返回调用 err 的 Unwrap 方法的结果，如果 err 的类型包含一个返回 error 的 Unwrap 方法。
+//
+// 否则，Unwrap 函数返回 nil。
 func Unwrap(err error) error {
 	return stderrors.Unwrap(err)
 }

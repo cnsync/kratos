@@ -10,14 +10,18 @@ import (
 	"time"
 )
 
+// 测试过滤器功能，过滤所有指定条件的日志
 func TestFilterAll(_ *testing.T) {
+	// 创建带默认时间戳和调用者信息的日志记录器
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
+	// 创建一个带多个过滤条件的日志助手
 	log := NewHelper(NewFilter(logger,
-		FilterLevel(LevelDebug),
-		FilterKey("username"),
-		FilterValue("hello"),
-		FilterFunc(testFilterFunc),
+		FilterLevel(LevelDebug),    // 过滤日志级别为 Debug 的日志
+		FilterKey("username"),      // 过滤键为 "username" 的日志
+		FilterValue("hello"),       // 过滤值为 "hello" 的日志
+		FilterFunc(testFilterFunc), // 自定义过滤函数
 	))
+	// 记录不同级别的日志，测试过滤效果
 	log.Log(LevelDebug, "msg", "test debug")
 	log.Info("hello")
 	log.Infow("password", "123456")
@@ -25,9 +29,10 @@ func TestFilterAll(_ *testing.T) {
 	log.Warn("warn log")
 }
 
+// 测试日志级别过滤
 func TestFilterLevel(_ *testing.T) {
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
-	log := NewHelper(NewFilter(NewFilter(logger, FilterLevel(LevelWarn))))
+	log := NewHelper(NewFilter(NewFilter(logger, FilterLevel(LevelWarn)))) // 过滤掉低于警告级别的日志
 	log.Log(LevelDebug, "msg1", "te1st debug")
 	log.Debug("test debug")
 	log.Debugf("test %s", "debug")
@@ -35,6 +40,7 @@ func TestFilterLevel(_ *testing.T) {
 	log.Warn("warn log")
 }
 
+// 测试调用者信息过滤
 func TestFilterCaller(_ *testing.T) {
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
 	log := NewFilter(logger)
@@ -43,25 +49,29 @@ func TestFilterCaller(_ *testing.T) {
 	logHelper.Log(LevelDebug, "msg1", "te1st debug")
 }
 
+// 测试根据键过滤
 func TestFilterKey(_ *testing.T) {
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
-	log := NewHelper(NewFilter(logger, FilterKey("password")))
+	log := NewHelper(NewFilter(logger, FilterKey("password"))) // 过滤键为 "password" 的日志
 	log.Debugw("password", "123456")
 }
 
+// 测试根据值过滤
 func TestFilterValue(_ *testing.T) {
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
-	log := NewHelper(NewFilter(logger, FilterValue("debug")))
+	log := NewHelper(NewFilter(logger, FilterValue("debug"))) // 过滤值为 "debug" 的日志
 	log.Debugf("test %s", "debug")
 }
 
+// 测试自定义过滤函数
 func TestFilterFunc(_ *testing.T) {
 	logger := With(DefaultLogger, "ts", DefaultTimestamp, "caller", DefaultCaller)
-	log := NewHelper(NewFilter(logger, FilterFunc(testFilterFunc)))
+	log := NewHelper(NewFilter(logger, FilterFunc(testFilterFunc))) // 使用自定义过滤函数
 	log.Debug("debug level")
 	log.Infow("password", "123456")
 }
 
+// 基准测试：按键过滤日志性能
 func BenchmarkFilterKey(b *testing.B) {
 	log := NewHelper(NewFilter(NewStdLogger(io.Discard), FilterKey("password")))
 	for i := 0; i < b.N; i++ {
@@ -69,6 +79,7 @@ func BenchmarkFilterKey(b *testing.B) {
 	}
 }
 
+// 基准测试：按值过滤日志性能
 func BenchmarkFilterValue(b *testing.B) {
 	log := NewHelper(NewFilter(NewStdLogger(io.Discard), FilterValue("password")))
 	for i := 0; i < b.N; i++ {
@@ -76,6 +87,7 @@ func BenchmarkFilterValue(b *testing.B) {
 	}
 }
 
+// 基准测试：自定义过滤函数性能
 func BenchmarkFilterFunc(b *testing.B) {
 	log := NewHelper(NewFilter(NewStdLogger(io.Discard), FilterFunc(testFilterFunc)))
 	for i := 0; i < b.N; i++ {
@@ -83,18 +95,20 @@ func BenchmarkFilterFunc(b *testing.B) {
 	}
 }
 
+// 自定义过滤函数示例
 func testFilterFunc(level Level, keyvals ...interface{}) bool {
-	if level == LevelWarn {
+	if level == LevelWarn { // 只允许警告级别日志通过
 		return true
 	}
 	for i := 0; i < len(keyvals); i++ {
-		if keyvals[i] == "password" {
+		if keyvals[i] == "password" { // 模糊处理 password 值
 			keyvals[i+1] = fuzzyStr
 		}
 	}
 	return false
 }
 
+// 测试带日志前缀的过滤函数
 func TestFilterFuncWitchLoggerPrefix(t *testing.T) {
 	buf := new(bytes.Buffer)
 	tests := []struct {
@@ -106,12 +120,10 @@ func TestFilterFuncWitchLoggerPrefix(t *testing.T) {
 			want:   "",
 		},
 		{
-			// Filtered value
 			logger: NewFilter(With(NewStdLogger(buf), "caller", "caller"), FilterFunc(testFilterFuncWithLoggerPrefix)),
 			want:   "INFO caller=caller msg=msg filtered=***\n",
 		},
 		{
-			// NO prefix
 			logger: NewFilter(With(NewStdLogger(buf)), FilterFunc(testFilterFuncWithLoggerPrefix)),
 			want:   "INFO msg=msg filtered=***\n",
 		},
@@ -130,6 +142,7 @@ func TestFilterFuncWitchLoggerPrefix(t *testing.T) {
 	}
 }
 
+// 带日志前缀的自定义过滤函数
 func testFilterFuncWithLoggerPrefix(level Level, keyvals ...interface{}) bool {
 	if level == LevelWarn {
 		return true
@@ -145,6 +158,7 @@ func testFilterFuncWithLoggerPrefix(level Level, keyvals ...interface{}) bool {
 	return false
 }
 
+// 测试上下文中日志过滤
 func TestFilterWithContext(t *testing.T) {
 	type CtxKey struct {
 		Key string
@@ -180,10 +194,12 @@ func TestFilterWithContext(t *testing.T) {
 
 type traceIDKey struct{}
 
+// 设置 trace ID
 func setTraceID(ctx context.Context, tid string) context.Context {
 	return context.WithValue(ctx, traceIDKey{}, tid)
 }
 
+// 获取 trace ID 的 Valuer
 func traceIDValuer() Valuer {
 	return func(ctx context.Context) any {
 		if ctx == nil {
@@ -196,6 +212,7 @@ func traceIDValuer() Valuer {
 	}
 }
 
+// 测试并发场景下的日志过滤
 func TestFilterWithContextConcurrent(t *testing.T) {
 	var buf bytes.Buffer
 	pctx := context.Background()
@@ -217,7 +234,7 @@ func TestFilterWithContextConcurrent(t *testing.T) {
 		defer wg.Done()
 		tid := "world"
 		ctx := setTraceID(pctx, tid)
-		NewHelper((WithContext(ctx, l))).Info("done2")
+		NewHelper(WithContext(ctx, l)).Info("done2")
 	}()
 
 	wg.Wait()

@@ -3,7 +3,7 @@ package zerolog
 import (
 	"github.com/rs/zerolog"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"github.com/cnsync/kratos/log"
 )
 
 var _ log.Logger = (*Logger)(nil)

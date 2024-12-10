@@ -8,7 +8,7 @@ import (
 	"github.com/go-chassis/sc-client"
 	"github.com/gofrs/uuid"
 
-	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/cnsync/kratos/registry"
 )
 
 var r *Registry
@@ -23,7 +23,7 @@ func (receiver *mockClient) WatchMicroService(_ string, _ func(*sc.MicroServiceI
 	return nil
 }
 
-//nolint
+// nolint
 func (receiver *mockClient) FindMicroServiceInstances(_,
 	_, microServiceName, _ string, _ ...sc.CallOption,
 ) ([]*pb.MicroServiceInstance, error) {

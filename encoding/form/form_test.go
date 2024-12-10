@@ -18,7 +18,7 @@ import (
 )
 
 // This variable can be replaced with -ldflags like below:
-// go test "-ldflags=-X github.com/go-kratos/kratos/v2/encoding/form.tagNameTest=form"
+// go test "-ldflags=-X grove/encoding/form.tagNameTest=form"
 var tagNameTest string
 
 func init() {

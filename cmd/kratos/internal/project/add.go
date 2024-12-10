@@ -9,7 +9,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 
-	"github.com/go-kratos/kratos/cmd/kratos/v2/internal/base"
+	"github.com/cnsync/kratos/cmd/kratos/internal/base"
 )
 
 var repoAddIgnores = []string{

@@ -1,11 +1,11 @@
 module github.com/go-kratos/kratos/contrib/log/tencent/v2
 
-go 1.19
+go 1.23.3
 
 require (
-	github.com/go-kratos/kratos/v2 v2.8.2
+	github.com/cnsync/kratos v2.8.2
 	github.com/tencentcloud/tencentcloud-cls-sdk-go v1.0.2
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.35.2
 )
 
 require (
@@ -15,4 +15,4 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 )
 
-replace github.com/go-kratos/kratos/v2 => ../../../
+replace github.com/cnsync/kratos => ../../../

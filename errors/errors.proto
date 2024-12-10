@@ -2,10 +2,14 @@ syntax = "proto3";
 
 package errors;
 
-option go_package = "github.com/go-kratos/kratos/v2/errors;errors";
+//option go_package = "grove/errors;errors";
+option go_package = "grove/errors;errors";
 option java_multiple_files = true;
-option java_package = "com.github.kratos.errors";
-option objc_class_prefix = "KratosErrors";
+//option java_package = "com.github.kratos.errors";
+option java_package = "grove.errors";
+//option objc_class_prefix = "KratosErrors";
+option objc_class_prefix = "groveErrors";
+
 
 import "google/protobuf/descriptor.proto";
 
@@ -23,3 +27,5 @@ extend google.protobuf.EnumOptions {
 extend google.protobuf.EnumValueOptions {
   int32 code = 1109;
 }
+
+// protoc --proto_path=E:\Work\go\bin\protobuf\src --proto_path=. --go_out=. .\errors.proto
