@@ -1,9 +1,9 @@
-module github.com/go-kratos/kratos/contrib/log/tencent/v2
+module github.com/cnsync/kratos/contrib/log/tencent/v2
 
 go 1.23.3
 
 require (
-	github.com/cnsync/kratos v2.8.2
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 	github.com/tencentcloud/tencentcloud-cls-sdk-go v1.0.2
 	google.golang.org/protobuf v1.35.2
 )

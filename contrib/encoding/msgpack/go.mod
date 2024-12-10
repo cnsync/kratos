@@ -1,9 +1,9 @@
-module github.com/go-kratos/kratos/contrib/encoding/msgpack/v2
+module github.com/cnsync/kratos/contrib/encoding/msgpack
 
 go 1.23.3
 
 require (
-	github.com/cnsync/kratos v2.8.2
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 )
 

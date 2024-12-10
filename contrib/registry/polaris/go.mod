@@ -1,9 +1,9 @@
-module github.com/go-kratos/kratos/contrib/registry/polaris/v2
+module github.com/cnsync/kratos/contrib/registry/polaris
 
 go 1.23.3
 
 require (
-	github.com/cnsync/kratos v2.8.2
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 	github.com/polarismesh/polaris-go v1.3.0
 )
 

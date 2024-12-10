@@ -12,7 +12,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 
-	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
+	"github.com/cnsync/kratos/contrib/registry/nacos/v2"
 	"github.com/cnsync/kratos"
 )
 
@@ -56,7 +56,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 
-	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
+	"github.com/cnsync/kratos/contrib/registry/nacos/v2"
 	"github.com/cnsync/kratos/transport/grpc"
 )
 

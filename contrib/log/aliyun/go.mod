@@ -1,10 +1,10 @@
-module github.com/go-kratos/kratos/contrib/log/aliyun/v2
+module github.com/cnsync/kratos/contrib/log/aliyun
 
 go 1.23.3
 
 require (
 	github.com/aliyun/aliyun-log-go-sdk v0.1.75
-	github.com/cnsync/kratos v2.8.2
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 	google.golang.org/protobuf v1.35.2
 )
 

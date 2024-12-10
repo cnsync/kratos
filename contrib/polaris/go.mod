@@ -1,13 +1,13 @@
-module github.com/go-kratos/kratos/contrib/polaris/v2
+module github.com/cnsync/kratos/contrib/polaris
 
 go 1.23.3
 
 require (
-	github.com/go-kratos/aegis v0.2.0
-	github.com/cnsync/kratos v2.8.2
 	github.com/google/uuid v1.6.0
 	github.com/polarismesh/polaris-go v1.3.0
 	google.golang.org/protobuf v1.35.2
+	github.com/go-kratos/aegis v0.2.0
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 )
 
 require (

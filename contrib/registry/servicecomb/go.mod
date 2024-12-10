@@ -1,11 +1,11 @@
-module github.com/go-kratos/kratos/contrib/registry/servicecomb/v2
+module github.com/cnsync/kratos/contrib/registry/servicecomb
 
 go 1.23.3
 
 require (
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 	github.com/go-chassis/cari v0.6.0
 	github.com/go-chassis/sc-client v0.6.1-0.20210615014358-a45e9090c751
-	github.com/cnsync/kratos v2.8.2
 	github.com/gofrs/uuid v4.2.0+incompatible
 )
 

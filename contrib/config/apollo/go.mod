@@ -1,10 +1,10 @@
-module github.com/go-kratos/kratos/contrib/config/apollo/v2
+module github.com/cnsync/kratos/contrib/config/apollo
 
 go 1.23.3
 
 require (
 	github.com/apolloconfig/agollo/v4 v4.3.1
-	github.com/cnsync/kratos v2.8.2
+	github.com/cnsync/kratos v0.0.0-00010101000000-000000000000
 )
 
 require (
