@@ -11,10 +11,10 @@ import (
 	"github.com/cnsync/kratos/transport"
 )
 
-// Option is an application option.
+// Option 是应用程序的选项。
 type Option func(o *options)
 
-// options is an application options.
+// options 是应用程序的选项。
 type options struct {
 	id        string
 	name      string
@@ -31,97 +31,97 @@ type options struct {
 	stopTimeout      time.Duration
 	servers          []transport.Server
 
-	// Before and After funcs
+	// 启动前和停止后的函数
 	beforeStart []func(context.Context) error
 	beforeStop  []func(context.Context) error
 	afterStart  []func(context.Context) error
 	afterStop   []func(context.Context) error
 }
 
-// ID with service id.
+// ID 用于设置服务 ID。
 func ID(id string) Option {
 	return func(o *options) { o.id = id }
 }
 
-// Name with service name.
+// Name 用于设置服务名称。
 func Name(name string) Option {
 	return func(o *options) { o.name = name }
 }
 
-// Version with service version.
+// Version 用于设置服务版本。
 func Version(version string) Option {
 	return func(o *options) { o.version = version }
 }
 
-// Metadata with service metadata.
+// Metadata 用于设置服务元数据。
 func Metadata(md map[string]string) Option {
 	return func(o *options) { o.metadata = md }
 }
 
-// Endpoint with service endpoint.
+// Endpoint 用于设置服务端点。
 func Endpoint(endpoints ...*url.URL) Option {
 	return func(o *options) { o.endpoints = endpoints }
 }
 
-// Context with service context.
+// Context 用于设置服务上下文。
 func Context(ctx context.Context) Option {
 	return func(o *options) { o.ctx = ctx }
 }
 
-// Logger with service logger.
+// Logger 用于设置服务日志记录器。
 func Logger(logger log.Logger) Option {
 	return func(o *options) { o.logger = logger }
 }
 
-// Server with transport servers.
+// Server 用于设置传输服务器。
 func Server(srv ...transport.Server) Option {
 	return func(o *options) { o.servers = srv }
 }
 
-// Signal with exit signals.
+// Signal 用于设置退出信号。
 func Signal(sigs ...os.Signal) Option {
 	return func(o *options) { o.sigs = sigs }
 }
 
-// Registrar with service registry.
+// Registrar 用于设置服务注册器。
 func Registrar(r registry.Registrar) Option {
 	return func(o *options) { o.registrar = r }
 }
 
-// RegistrarTimeout with registrar timeout.
+// RegistrarTimeout 用于设置注册器超时时间。
 func RegistrarTimeout(t time.Duration) Option {
 	return func(o *options) { o.registrarTimeout = t }
 }
 
-// StopTimeout with app stop timeout.
+// StopTimeout 用于设置应用程序停止超时时间。
 func StopTimeout(t time.Duration) Option {
 	return func(o *options) { o.stopTimeout = t }
 }
 
-// Before and Afters
+// 启动前和停止后的函数
 
-// BeforeStart run funcs before app starts
+// BeforeStart 在应用程序启动前运行函数。
 func BeforeStart(fn func(context.Context) error) Option {
 	return func(o *options) {
 		o.beforeStart = append(o.beforeStart, fn)
 	}
 }
 
-// BeforeStop run funcs before app stops
+// BeforeStop 在应用程序停止前运行函数。
 func BeforeStop(fn func(context.Context) error) Option {
 	return func(o *options) {
 		o.beforeStop = append(o.beforeStop, fn)
 	}
 }
 
-// AfterStart run funcs after app starts
+// AfterStart 在应用程序启动后运行函数。
 func AfterStart(fn func(context.Context) error) Option {
 	return func(o *options) {
 		o.afterStart = append(o.afterStart, fn)
 	}
 }
 
-// AfterStop run funcs after app stops
+// AfterStop 在应用程序停止后运行函数。
 func AfterStop(fn func(context.Context) error) Option {
 	return func(o *options) {
 		o.afterStop = append(o.afterStop, fn)
