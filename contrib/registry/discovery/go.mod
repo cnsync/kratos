@@ -8,6 +8,6 @@ require (
 	github.com/pkg/errors v0.9.1
 )
 
-require golang.org/x/net v0.29.0 // indirect
+require golang.org/x/net v0.32.0 // indirect
 
 replace github.com/cnsync/kratos => ../../../
